@@ -1,4 +1,4 @@
-export const inputsData = `173
+export const inputData = `173
 178
 179
 187

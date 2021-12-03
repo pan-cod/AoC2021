@@ -1,18 +1,17 @@
-
 import { from } from "rxjs";
 import { pairwise, map, scan, filter, takeLast } from "rxjs/operators";
 
-import { inputsData } from "./inputs-data";
+import { inputData } from "./input-data";
 
 export function findSolution(): void {
-  const inputsDataAsArray: string[] = inputsData.split(`
+  const inputDataAsArray: string[] = inputData.split(`
 `);
 
-  const inputsData$ = from(inputsDataAsArray);
-  console.log('--- Day 1: Sonar Sweep ---')
-  console.log('Solution for PART ONE:')
+  const inputData$ = from(inputDataAsArray);
+  console.log("--- Day 1: Sonar Sweep ---");
+  console.log("Solution for PART ONE:");
 
-  inputsData$
+  inputData$
     .pipe(
       map((value) => parseInt(value, 10)),
       pairwise(),
@@ -22,17 +21,16 @@ export function findSolution(): void {
     )
     .subscribe(console.log);
 
-  const inputsDataAsWindows: string[][] = inputsDataAsArray.flatMap((_, i) =>
-    i <= inputsDataAsArray.length - 3 ? [inputsDataAsArray.slice(i, i + 3)] : []
+  const inputDataAsWindows: string[][] = inputDataAsArray.flatMap((_, i) =>
+    i <= inputDataAsArray.length - 3 ? [inputDataAsArray.slice(i, i + 3)] : []
   );
 
-  const inputsDataWindows$ = from(inputsDataAsWindows);
-  console.log('Solution for PART TWO:')
+  const inputDataWindows$ = from(inputDataAsWindows);
+  console.log("Solution for PART TWO:");
 
-  inputsDataWindows$
+  inputDataWindows$
     .pipe(
-      map((array) =>
-      array.reduce((acc, curr) => acc + parseInt(curr, 10), 0)),
+      map((array) => array.reduce((acc, curr) => acc + parseInt(curr, 10), 0)),
       pairwise(),
       filter(([prev, curr]) => prev < curr),
       scan((acc, _) => acc + 1, 0),
