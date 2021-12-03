@@ -5,7 +5,7 @@ import { pairwise, map, scan, filter, takeLast } from "rxjs/operators";
 import { inputsData } from "./inputs-data";
 
 export function findSolution(): void {
-  const inputsDataAsArray = inputsData.split(`
+  const inputsDataAsArray: string[] = inputsData.split(`
 `);
 
   const inputsData$ = from(inputsDataAsArray);
@@ -22,18 +22,17 @@ export function findSolution(): void {
     )
     .subscribe(console.log);
 
-  const inputsDataAsWindows = inputsDataAsArray.flatMap((_, i) =>
+  const inputsDataAsWindows: string[][] = inputsDataAsArray.flatMap((_, i) =>
     i <= inputsDataAsArray.length - 3 ? [inputsDataAsArray.slice(i, i + 3)] : []
   );
 
-  const inputsDataWindows$ = from(inputsDataAsWindows as string[][]);
+  const inputsDataWindows$ = from(inputsDataAsWindows);
   console.log('Solution for PART TWO:')
 
   inputsDataWindows$
     .pipe(
       map((array) =>
-      array.reduce((acc, curr) => acc + parseInt(curr, 10), 0)
-      ),
+      array.reduce((acc, curr) => acc + parseInt(curr, 10), 0)),
       pairwise(),
       filter(([prev, curr]) => prev < curr),
       scan((acc, _) => acc + 1, 0),
