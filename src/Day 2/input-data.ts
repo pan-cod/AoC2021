@@ -1,4 +1,3 @@
-
 export const inputData = `forward 2
 forward 2
 down 7

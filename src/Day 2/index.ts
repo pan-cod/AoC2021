@@ -10,22 +10,23 @@ export function findSolution(): void {
   console.log("--- Day 2: Dive! ---");
   console.log("Solution for PART ONE:");
 
+  const mapArraysToNumbers = (array: string[]) =>
+    array.map((value) => {
+      const splitValue = value.split(" ");
+
+      if (splitValue[0] === "up") {
+        return -parseInt(splitValue[1], 10);
+      }
+      return parseInt(splitValue[1], 10);
+    });
+
   inputData$
     .pipe(
       groupBy((data) => data.includes("forward")),
       mergeMap((grouppedData) =>
         grouppedData.pipe(
           toArray(),
-          map((array) =>
-            array.map((value) => {
-              const splitValue = value.split(" ");
-
-              if (splitValue[0] === "up") {
-                return -parseInt(splitValue[1], 10);
-              }
-              return parseInt(splitValue[1], 10);
-            })
-          )
+          map((array) => mapArraysToNumbers(array))
         )
       ),
       scan(
@@ -35,4 +36,42 @@ export function findSolution(): void {
       takeLast(1)
     )
     .subscribe(console.log);
+
+  console.log("Solution for PART TWO:");
+  const solvePartTwoPuzzle = () => {
+    let aim = 0;
+    let depth = 0;
+    let horizontal = 0;
+
+    function switchValues(direction: string, value: number) {
+      switch (direction) {
+        case "up": {
+          aim -= value;
+          break;
+        }
+        case "down": {
+          aim += value;
+          break;
+        }
+        default: {
+          depth += value * aim;
+          horizontal += value;
+        }
+      }
+    }
+
+    return () =>
+      inputData$
+        .pipe(
+          map((value) => {
+            const splitValue = value.split(" ");
+            switchValues(splitValue[0], parseInt(splitValue[1], 10));
+            return horizontal * depth;
+          }),
+          takeLast(1)
+        )
+        .subscribe(console.log);
+  };
+
+  solvePartTwoPuzzle()();
 }
