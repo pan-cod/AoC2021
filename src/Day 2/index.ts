@@ -1,12 +1,13 @@
 import { from, groupBy, map, mergeMap, scan, takeLast, toArray } from "rxjs";
+import { subscriptionOnSource } from "../utils/utils";
 
 import { inputData } from "./input-data";
 
 export function findSolution(): void {
   const inputDataAsArray: string[] = inputData.split(`
 `);
+  const manageSubscription$ = subscriptionOnSource(from(inputDataAsArray));
 
-  const inputData$ = from(inputDataAsArray);
   console.log("--- Day 2: Dive! ---");
   console.log("Solution for PART ONE:");
 
@@ -20,7 +21,7 @@ export function findSolution(): void {
       return parseInt(splitValue[1], 10);
     });
 
-  inputData$
+  manageSubscription$
     .pipe(
       groupBy((data) => data.includes("forward")),
       mergeMap((grouppedData) =>
@@ -61,7 +62,7 @@ export function findSolution(): void {
     }
 
     return () =>
-      inputData$
+      manageSubscription$
         .pipe(
           map((value) => {
             const splitValue = value.split(" ");

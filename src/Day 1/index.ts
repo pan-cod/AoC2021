@@ -1,17 +1,18 @@
 import { from } from "rxjs";
 import { pairwise, map, scan, filter, takeLast } from "rxjs/operators";
+import { subscriptionOnSource } from "../utils/utils";
 
 import { inputData } from "./input-data";
 
 export function findSolution(): void {
   const inputDataAsArray: string[] = inputData.split(`
 `);
+  const manageSubscription$ = subscriptionOnSource(from(inputDataAsArray));
 
-  const inputData$ = from(inputDataAsArray);
   console.log("--- Day 1: Sonar Sweep ---");
   console.log("Solution for PART ONE:");
 
-  inputData$
+  manageSubscription$
     .pipe(
       map((value) => parseInt(value, 10)),
       pairwise(),
@@ -24,11 +25,11 @@ export function findSolution(): void {
   const inputDataAsWindows: string[][] = inputDataAsArray.flatMap((_, i) =>
     i <= inputDataAsArray.length - 3 ? [inputDataAsArray.slice(i, i + 3)] : []
   );
+  const manageSubscriptionTwo$ = subscriptionOnSource(from(inputDataAsWindows));
 
-  const inputDataWindows$ = from(inputDataAsWindows);
   console.log("Solution for PART TWO:");
 
-  inputDataWindows$
+  manageSubscriptionTwo$
     .pipe(
       map((array) => array.reduce((acc, curr) => acc + parseInt(curr, 10), 0)),
       pairwise(),
