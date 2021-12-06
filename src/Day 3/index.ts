@@ -1,4 +1,5 @@
-import { from, map, takeLast } from "rxjs";
+import { from, takeLast } from "rxjs";
+import { map } from "rxjs/operators";
 import { subscriptionOnSource } from "../utils/utils";
 
 import { inputData } from "./input-data";
@@ -8,46 +9,47 @@ interface IBitOccurrencesCounter {
 }
 
 export function findSolution(): void {
+  console.log("--- Day 3: Binary Diagnostic ---");
   const inputDataAsArray: string[] = inputData.split(`
 `);
   const manageSubscription = subscriptionOnSource(from(inputDataAsArray));
 
-  console.log("--- Day 3: Binary Diagnostic ---");
-  const solvePartOnePuzzle = () => {
+  solvePartOnePuzzle()();
+
+  function solvePartOnePuzzle() {
     console.log("Solution for PART ONE:");
     const initial: IBitOccurrencesCounter = { 0: [], 1: [] };
-
-    function countOccurrencesOfBit(binary: string) {
-      return binary
-        .split("")
-        .reduce((acc: IBitOccurrencesCounter, bit: string, index: number) => {
-          acc[bit][index] ? acc[bit][index]++ : (acc[bit][index] = 1);
-          return acc;
-        }, initial);
-    }
 
     return () =>
       manageSubscription
         .pipe(
-          map((binary) => countOccurrencesOfBit(binary)),
+          map((binary) =>
+            binary
+              .split("")
+              .reduce(
+                (acc: IBitOccurrencesCounter, bit: string, index: number) => {
+                  acc[bit][index] ? acc[bit][index]++ : (acc[bit][index] = 1);
+                  return acc;
+                },
+                initial
+              )
+          ),
           takeLast(1),
           map((results) => {
-            let gammaRate = "";
-            let epsilonRate = "";
-            results[0].forEach((value, index) => {
-              if (results[1][index] > value) {
-                gammaRate += "1";
-                epsilonRate += "0";
-                return;
-              }
-              gammaRate += "0";
-              epsilonRate += "1";
-            });
+            const parsedResults = results[0].map((value, index) =>
+              results[1][index] < value ? "0" : "1"
+            );
+            const [gammaRate, epsilonRate] = [
+              parsedResults.join(""),
+              parsedResults
+                .map((value) => (parseInt(value) ? "0" : "1"))
+                .join(""),
+            ];
             return parseInt(gammaRate, 2) * parseInt(epsilonRate, 2);
           })
         )
         .subscribe(console.log);
-  };
+  }
 
-  solvePartOnePuzzle()();
+  // function solvePartTwoPuzzle() {}
 }
